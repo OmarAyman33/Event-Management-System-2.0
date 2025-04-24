@@ -48,6 +48,7 @@ public class LoginPage extends Application {
                 login.getChildren().clear();
                 login.getChildren().addAll(usernameInput,passwordInput,genderInput,userTypeForm,submitBtn,alternativeLink);
                 stage.setTitle("Register");
+                submitBtn.setText("Register");
                 alternativeLink.setText("Already have an account?");
                 loginMode = false;
             }
@@ -56,6 +57,7 @@ public class LoginPage extends Application {
                 login.getChildren().addAll(usernameInput,passwordInput,alternativeLink,submitBtn);
                 stage.setTitle("Login");
                 alternativeLink.setText("Create an account");
+                submitBtn.setText("Login");
                 loginMode = true;
             }
         });

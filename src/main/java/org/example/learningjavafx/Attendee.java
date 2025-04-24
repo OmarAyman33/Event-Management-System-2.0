@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Attendee extends User {
-    private int choice;
     private ArrayList<Event> registeredEvents;
     private Wallet wallet;
     private ArrayList<Category> interests;
-
+    private AttendeePage dashboard = new AttendeePage(this);
     // Constructor with default wallet balance
     Attendee(String username, String password, String dob, Gender gender) {
         super(username, password, dob, gender);
@@ -94,5 +93,8 @@ public class Attendee extends User {
             Event event = registeredEvents.get(i);
             System.out.println((i + 1) + ". " + event.getName() + " - $" + event.getPrice() + ", Date: " + event.getDate());
         }
+    }
+    public void displayDashboard(){
+        dashboard.displayDashboard();
     }
 }

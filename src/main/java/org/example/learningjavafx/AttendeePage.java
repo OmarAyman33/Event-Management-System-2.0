@@ -13,7 +13,11 @@ import javafx.scene.control.Label;
 import java.time.LocalDate;
 
 public class AttendeePage {
-    public static void displayDashboard(Attendee attendee){
+    private Attendee attendee;
+    AttendeePage(Attendee attendee){
+        this.attendee = attendee;
+    }
+    public void displayDashboard(){
         Stage stage = new Stage();
         VBox dashboard = new VBox();
         dashboard.setSpacing(10);
