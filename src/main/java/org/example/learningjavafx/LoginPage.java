@@ -60,8 +60,8 @@ public class LoginPage extends Application {
                 String username = usernameInput.getText();
                 String password = passwordInput.getText();
                 LoginAuth.login(username,password,stage);
-                // call on functions from login class to validate and verify
-                // if username and password are correct, call on user.DisplayDashboard()
+                // note that the updated login function already displays the user's dashboard
+
             }
             else{
                 String username = usernameInput.getText();
@@ -70,6 +70,7 @@ public class LoginPage extends Application {
                 String type = userTypeForm.getValue();
                 // validate inputs and make a new account
                 // then call on .displayDashboard()
+                // still not complete, waiting for Organizer dashboard to be complete
             }
         });
         login.getChildren().addAll(usernameInput,passwordInput,alternativeLink,submitBtn);
