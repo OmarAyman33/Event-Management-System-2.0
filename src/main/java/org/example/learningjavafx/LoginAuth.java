@@ -1,6 +1,10 @@
 package org.example.learningjavafx;
 
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 
 import java.util.Scanner;
 
@@ -18,7 +22,7 @@ public class LoginAuth {
     }
 
 
-    private boolean isUsernameTaken(String username) {
+    public static boolean isUsernameTaken(String username) {
         for (int i = 0; i < Database.users.size(); i++) {
             if (Database.users.get(i).getUsername().equalsIgnoreCase(username)) {
                 return true;
@@ -27,47 +31,60 @@ public class LoginAuth {
         return false;
     }
 
-    private void register(Stage stage){
-        int choice;
-        System.out.println("1. for Registration as Attendee, 2. for Registration as Organizer");
-        choice = input.nextInt();
-        input.nextLine(); // clear the scanner
-        System.out.println("Enter your username: ");
-        String username = input.nextLine();
+    public static void register(String username, String password, String genderInput, String type, String dob, Stage stage) {
+        int choice = 0;
+        if (type.equals("Attendee"))
+            choice = 1;
+        else if (type.equals("Organizer"))
+            choice = 2;
 
-        while (!Validation.username(username) || isUsernameTaken(username)) {
-            if (!Validation.username(username)) {
-                System.out.println("Invalid username. Try again.");
-            } else {
-                System.out.println("Username already taken. Try another.");
-            }
-            username = input.nextLine();
+        // Create a VBox to display feedback to user
+        VBox feedbackPane = new VBox();
+        feedbackPane.setSpacing(10);
+        Label messageLabel = new Label();
+        feedbackPane.getChildren().add(messageLabel);
+
+        Scene feedbackScene = new Scene(feedbackPane, 300, 150);
+        stage.setScene(feedbackScene);
+
+        // Username validation
+        if (!Validation.username(username)) {
+            messageLabel.setText("Invalid username. Please try again.");
+            return;
+        }
+        if (isUsernameTaken(username)) {
+            messageLabel.setText("Username already taken. Please choose another one.");
+            return;
         }
 
-        System.out.println("Enter your password: ");
-        String password = input.nextLine();
-        while (!Validation.password(password)){
-            System.out.println("Invalid password. Try again");
-            password = input.nextLine();
+        // Password validation
+        if (!Validation.password(password)) {
+            messageLabel.setText("Invalid password. Please try again.");
+            return;
         }
-        System.out.print("Enter your date of birth (DD/MM/YYYY): ");
-        String dob = input.nextLine();
 
-        System.out.print("Enter your gender (MALE / FEMALE): ");
-        String genderInput = input.nextLine().toUpperCase();
-        while (!genderInput.equals("MALE") && !genderInput.equals("FEMALE")) {
-            System.out.println("Invalid input. Please enter MALE or FEMALE.");
-            genderInput = input.nextLine().toUpperCase();
+        // Gender validation
+        Gender gender;
+        try {
+            gender = Gender.valueOf(genderInput.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            messageLabel.setText("Invalid gender. Please select Male or Female.");
+            return;
         }
-        Gender gender = Gender.valueOf(genderInput);
+
+        // Create new user
         User newUser;
         if (choice == 1) {
             newUser = new Attendee(username, password, dob, gender);
-        } else {
+        } else if (choice == 2) {
             newUser = new Organizer(username, password, dob, gender);
+        } else {
+            messageLabel.setText("Invalid user type.");
+            return;
         }
 
-        Database.users.add(newUser); // Add to user list
-        newUser.displayDashboard(stage);  // Call display dashboard
+        // Add to database and open dashboard
+        Database.users.add(newUser);
+        newUser.displayDashboard(stage);
     }
 }
