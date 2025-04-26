@@ -1,5 +1,7 @@
 package org.example.learningjavafx;
 
+import javafx.stage.Stage;
+
 enum Gender {
     MALE, FEMALE
 }
@@ -49,5 +51,5 @@ public abstract class User {
         return false;
     }
 
-    public void displayDashboard(){}
+    public void displayDashboard(Stage stage){}
 }

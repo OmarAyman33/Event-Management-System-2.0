@@ -10,6 +10,26 @@ public class Database {
     public static List<Room> rooms = new ArrayList<Room>();
     public static List<Category> categories = new ArrayList<Category>();
     public static LoginAuth login = new LoginAuth();
+    public static String menuButtonStyle =
+            "-fx-background-color: #2196F3;" +   // green background
+            "-fx-text-fill: white;" +            // white text
+            "-fx-font-weight: bold;" +           // bold text
+            "-fx-font-size: 14px;" +             // decent text size
+            "-fx-background-radius: 12px;" +     // rounded corners
+            "-fx-border-radius: 12px;" +         // rounded borders
+            "-fx-padding: 10px 20px;" +          // padding inside
+            "-fx-border-color: transparent;" +   // no visible border
+            "-fx-cursor: hand;";                 // cursor becomes hand on hover
+    public static String confirmButtonStyle = "-fx-background-color: #F5F5F5;" + // very light gray background
+            "-fx-text-fill: #333333;" +        // dark gray text
+            "-fx-font-weight: bold;" +         // bold text
+            "-fx-font-size: 13px;" +           // slightly smaller text size
+            "-fx-background-radius: 8px;" +    // gentle rounded corners
+            "-fx-border-radius: 8px;" +
+            "-fx-border-color: #CCCCCC;" +     // light gray border
+            "-fx-border-width: 1px;" +         // thin border
+            "-fx-padding: 8px 16px;" +         // a little less padding
+            "-fx-cursor: hand;";               // hand cursor on hover
 
     static {
         // === CATEGORIES ===

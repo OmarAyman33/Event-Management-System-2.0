@@ -1,5 +1,7 @@
 package org.example.learningjavafx;
 
+import javafx.stage.Stage;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -184,7 +186,7 @@ public class Admin extends User {
         }
     }
 
-    public void displayDashboard() {
+    public void displayDashboard(Stage stage) {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -255,7 +257,7 @@ public class Admin extends User {
 
                 case 6:
                     System.out.println("Logging out...");
-                    Database.login.start();
+
                     return;
 
                 default:

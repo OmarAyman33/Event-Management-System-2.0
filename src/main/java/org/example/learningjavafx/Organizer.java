@@ -1,5 +1,7 @@
 package org.example.learningjavafx;
 
+import javafx.stage.Stage;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -305,7 +307,7 @@ public class Organizer extends User {
 
     //Main Dashboard (Will check again later)
     @Override
-    public void displayDashboard() {
+    public void displayDashboard(Stage stage) {
         Scanner scanner = new Scanner(System.in);
         int choice = -1;
 
@@ -353,10 +355,10 @@ public class Organizer extends User {
                             wallet.addFunds(amount);
                         else
                             System.out.println("Invalid amount, try again.");
-                        displayDashboard();
+                        displayDashboard(stage);
                     case 0:
                         System.out.println("Logging out...");
-                        Database.login.start();
+
                         break;
                     default:
                         System.out.println("Invalid choice. Please enter a number from the menu.");

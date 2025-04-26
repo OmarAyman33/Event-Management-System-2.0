@@ -17,6 +17,7 @@ public class LoginPage extends Application {
         TextField usernameInput= new TextField();
         usernameInput.setPromptText("Username");
 
+
         PasswordField passwordInput = new PasswordField();
         passwordInput.setPromptText("Password");
 
@@ -25,15 +26,7 @@ public class LoginPage extends Application {
         genderInput.setPromptText("Gender");
 
         Button submitBtn = new Button("Login");
-        submitBtn.setStyle( // using CSS esque style to make the button look modern
-                "-fx-background-color: #4CAF50;" +
-                "-fx-text-fill: white;" +
-                "-fx-font-size: 14px;" +
-                "-fx-padding: 10px 20px;" +
-                "-fx-background-radius: 20px;" +
-                "-fx-border-radius: 20px;" +
-                "-fx-cursor: hand;"
-        );
+        submitBtn.setStyle(Database.confirmButtonStyle);
 
         // hyperlink to allow switching between
         Hyperlink alternativeLink = new Hyperlink("Create new account");
@@ -43,7 +36,7 @@ public class LoginPage extends Application {
         userTypeForm.setPromptText("Attendee/Organizer");
 
         alternativeLink.setOnAction(e->{
-            // event for switching from login to regisster and vice versa
+            // event for switching from login to register and vice versa
             if(loginMode){
                 login.getChildren().clear();
                 login.getChildren().addAll(usernameInput,passwordInput,genderInput,userTypeForm,submitBtn,alternativeLink);
@@ -61,10 +54,12 @@ public class LoginPage extends Application {
                 loginMode = true;
             }
         });
+
         submitBtn.setOnAction(e->{
             if(loginMode) {
                 String username = usernameInput.getText();
                 String password = passwordInput.getText();
+                LoginAuth.login(username,password,stage);
                 // call on functions from login class to validate and verify
                 // if username and password are correct, call on user.DisplayDashboard()
             }

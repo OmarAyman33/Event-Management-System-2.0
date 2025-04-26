@@ -1,5 +1,7 @@
 package org.example.learningjavafx;
 
+import javafx.stage.Stage;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -8,7 +10,7 @@ public class Attendee extends User {
     private ArrayList<Event> registeredEvents;
     private Wallet wallet;
     private ArrayList<Category> interests;
-    private AttendeePage dashboard = new AttendeePage(this);
+    private AttendeePage attendeePage = new AttendeePage(this);
     // Constructor with default wallet balance
     Attendee(String username, String password, String dob, Gender gender) {
         super(username, password, dob, gender);
@@ -64,26 +66,16 @@ public class Attendee extends User {
     }
 
     // Purchase a ticket for a selected event
-    public void buyTicket(int eventIndex) {
+    public boolean buyTicket(Event selectedEvent) {
         ArrayList<Event> availableEvents = new ArrayList<Event>();
-        for (int i = 0; i < Database.events.size(); i++) {
-            if (Database.events.get(i).getDate().isAfter(LocalDate.now()))
-                availableEvents.add(Database.events.get(i));
-        }
-
-        eventIndex--; // Adjust for 0-based indexing
-
-        if (eventIndex >= 0 && eventIndex < availableEvents.size()) {
-            Event selectedEvent = availableEvents.get(eventIndex);
-            if (wallet.withdraw(selectedEvent.getPrice())) {
-                registeredEvents.add(selectedEvent);
-                selectedEvent.addAttendee(this);
-                System.out.println("Ticket purchased for: " + selectedEvent.getName());
-            } else {
-                System.out.println("Not enough balance.");
-            }
+        if (wallet.withdraw(selectedEvent.getPrice())) {
+            registeredEvents.add(selectedEvent);
+            selectedEvent.addAttendee(this);
+            System.out.println("Ticket purchased for: " + selectedEvent.getName());
+            return true;
         } else {
-            System.out.println("Invalid event number.");
+            System.out.println("Not enough balance.");
+            return false;
         }
     }
 
@@ -94,7 +86,24 @@ public class Attendee extends User {
             System.out.println((i + 1) + ". " + event.getName() + " - $" + event.getPrice() + ", Date: " + event.getDate());
         }
     }
-    public void displayDashboard(){
-        dashboard.displayDashboard();
+
+    public ArrayList<Event> getRegisteredEvents() {
+        return registeredEvents;
+    }
+
+    public Wallet getWallet(){
+        return wallet;
+    }
+
+    public ArrayList<Category> getInterests() {
+        return interests;
+    }
+
+    public void addInterest(Category cat) {
+        interests.add(cat);
+    }
+
+    public void displayDashboard(Stage stage){
+        attendeePage.displayDashboard(stage);
     }
 }

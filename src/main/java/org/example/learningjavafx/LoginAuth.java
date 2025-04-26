@@ -1,41 +1,22 @@
 package org.example.learningjavafx;
 
+import javafx.stage.Stage;
+
 import java.util.Scanner;
 
 public class LoginAuth {
     // start page of program
     Scanner input = new Scanner(System.in);
-    public void start(){
-        int choice;
-        System.out.println("Press 1. for Login, 2. for Registration, 3. to exit the program");
-        choice = input.nextInt();
-        input.nextLine(); // clear input
-        if(choice == 1)
-            login();
-        else if (choice == 2)
-            register();
-        else if (choice == 3) {
-            System.out.println("Thanks for using our program!");
-            System.exit(0);
-        } else
-        {
-            System.out.println("invalid choice, try again.");
-            start();
+
+    public static void login(String username, String password, Stage stage){
+        for (int i = 0; i < Database.users.size(); i++) {
+            if (Database.users.get(i).login(username, password)) {
+                Database.users.get(i).displayDashboard(stage);
+                return;
+            }
         }
     }
-    private void login(){
-        String username;
-        String password;
-        System.out.println("Enter your username: ");
-        username = input.nextLine();
-        System.out.println("Enter your password: ");
-        password = input.nextLine();
-        for(int i = 0; i < Database.users.size(); i++)
-        {
-            if(Database.users.get(i).login(username,password))
-                Database.users.get(i).displayDashboard();
-        }
-    }
+
 
     private boolean isUsernameTaken(String username) {
         for (int i = 0; i < Database.users.size(); i++) {
@@ -46,7 +27,7 @@ public class LoginAuth {
         return false;
     }
 
-    private void register(){
+    private void register(Stage stage){
         int choice;
         System.out.println("1. for Registration as Attendee, 2. for Registration as Organizer");
         choice = input.nextInt();
@@ -87,6 +68,6 @@ public class LoginAuth {
         }
 
         Database.users.add(newUser); // Add to user list
-        newUser.displayDashboard();  // Call display dashboard
+        newUser.displayDashboard(stage);  // Call display dashboard
     }
 }
