@@ -14,6 +14,7 @@ public class LoginPage extends Application {
         VBox login = new VBox();
         login.setSpacing(10); // to make the components not look tightly packed
         login.setPadding(new Insets(20));
+
         TextField usernameInput= new TextField();
         usernameInput.setPromptText("Username");
 
@@ -45,7 +46,7 @@ public class LoginPage extends Application {
             // event for switching from login to register and vice versa
             if(loginMode){
                 login.getChildren().clear();
-                login.getChildren().addAll(usernameInput,passwordInput,genderInput,userTypeForm,submitBtn,dobInput,alternativeLink,feedbackLabel);
+                login.getChildren().addAll(usernameInput,passwordInput,genderInput,userTypeForm,dobInput,submitBtn,alternativeLink,feedbackLabel);
                 stage.setTitle("Register");
                 submitBtn.setText("Register");
                 alternativeLink.setText("Already have an account?");

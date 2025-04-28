@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Admin extends User {
     private String role;
     private String workingHours;
-
+    private AdminDashboard dashboard = new AdminDashboard(this);
 
     //Constructors
 
@@ -187,83 +187,7 @@ public class Admin extends User {
     }
 
     public void displayDashboard(Stage stage) {
-        Scanner scanner = new Scanner(System.in);
-
-        while (true) {
-            System.out.println("\n--- Admin Dashboard ---");
-            System.out.println("1. Add Category");
-            System.out.println("2. Add Room");
-            System.out.println("3. View All Rooms");
-            System.out.println("4. View All Events");
-            System.out.println("5. Remove Event");
-            System.out.println("6. Log Out");
-            System.out.print("Enter your choice: ");
-
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // clear input buffer
-
-            switch (choice) {
-                case 1:
-                    addCategory();
-                    break;
-
-                case 2:
-                    // Input room details and call your addRoom method
-                    System.out.print("Enter Room Name: ");
-                    String roomName = scanner.nextLine();
-                    System.out.print("Enter Capacity: ");
-                    int capacity = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.print("Enter Price: ");
-                    double price = scanner.nextDouble();
-                    scanner.nextLine();
-
-                    try {
-                        Room room = new Room(roomName, capacity,price);
-                        Database.rooms.add(room);
-                    } catch (IllegalArgumentException e) {
-                        System.out.println("Error: " + e.getMessage());
-                    }
-                    break;
-
-                case 3:
-                    viewAllRooms();
-                    break;
-
-                case 4:
-                    viewAllEvents();
-                    break;
-
-                case 5:
-                    // Show event list and remove one
-                    if (Database.events.isEmpty()) {
-                        System.out.println("No events available to remove.");
-                    } else {
-                        for (int i = 0; i < Database.events.size(); i++) {
-                            System.out.println((i + 1) + ". " + Database.events.get(i).getName());
-                        }
-                        System.out.print("Enter event number to remove: ");
-                        int index = scanner.nextInt();
-                        scanner.nextLine();
-
-                        if (index >= 1 && index <= Database.events.size()) {
-                            Event eventToRemove = Database.events.get(index - 1);
-                            removeCurrentEvent(eventToRemove);
-                        } else {
-                            System.out.println("Invalid choice.");
-                        }
-                    }
-                    break;
-
-                case 6:
-                    System.out.println("Logging out...");
-
-                    return;
-
-                default:
-                    System.out.println("Invalid option, please try again.");
-            }
-        }
+        dashboard.displayDashboard(stage);
     }
 
 
