@@ -3,13 +3,7 @@ package org.example.learningjavafx;
 import java.time.LocalDate;
 import java.util.ArrayList;
 //made by Ahmed Ashraf 16/4/2025
- // don't forget to make thesse
-// ERROR HANDLING TO IMPLEMENT:
-// 1. Constructor: Validate name (non-empty), capacity (positive)
-// 2. bookDate(): Check for null/duplicate dates
-// 3. getBookedDates(): Return defensive copy
-// 4. equals()/hashCode(): Keep sync for collections
-// 5. Add null checks for critical methods
+
 
 public class Room {
 
