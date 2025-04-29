@@ -113,7 +113,25 @@ public class AttendeePage {
         backBtn.setStyle(Database.confirmButtonStyle);
         backBtn.setOnAction(e -> displayDashboard(stage));
 
-        vBox.getChildren().addAll(titleLabel, events, backBtn);
+        Button refundTicket = new Button("refund selected event ticket");
+        refundTicket.setStyle(Database.menuButtonStyle);
+        Label successLabel = new Label();
+        refundTicket.setOnAction(e->{
+            if(events.getSelectionModel() == null)
+                return;
+            int index = events.getSelectionModel().getSelectedIndex();
+            ArrayList<Event> futureEvents = new ArrayList<>();
+            for(int i = 0 ; i < attendeeRegisteredEvents.size(); i++)
+            {
+                if(attendeeRegisteredEvents.get(i).getDate().isAfter(LocalDate.now()))
+                    futureEvents.add(attendeeRegisteredEvents.get(i));
+            }
+            attendee.removeEvent(futureEvents.get(index));
+            successLabel.setText("event removed successfully");
+            events.refresh();
+        });
+
+        vBox.getChildren().addAll(titleLabel, events,refundTicket, backBtn,successLabel);
         return new Scene(vBox, 300, 300);
     }
 

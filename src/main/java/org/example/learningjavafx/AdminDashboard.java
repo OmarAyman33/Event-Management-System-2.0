@@ -174,10 +174,10 @@ public class AdminDashboard {
 
         removeBtn.setOnAction(e -> {
             int index = roomList.getSelectionModel().getSelectedIndex();
-            if (index != -1) {
+            if (index != -1) { // if nothing is selected the index is automatically sett to -1
                 Room room = rooms.get(index);
                 admin.removeRoom(room);
-                feedback.setText("Room removed (and associated events).");
+                feedback.setText("Room removed.");
                 roomList.getItems().remove(index);
                 rooms.remove(index);
             } else {
