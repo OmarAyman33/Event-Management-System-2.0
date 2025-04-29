@@ -106,4 +106,8 @@ public class Attendee extends User {
     public void displayDashboard(Stage stage){
         attendeePage.displayDashboard(stage);
     }
+
+    public String getGender() {
+        return gender.toString();
+    }
 }

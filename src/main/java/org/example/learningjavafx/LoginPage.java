@@ -7,6 +7,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
+
 public class LoginPage extends Application {
     private boolean loginMode = true;
     public void start(Stage stage){
@@ -35,9 +37,10 @@ public class LoginPage extends Application {
         ComboBox<String> userTypeForm = new ComboBox<>(); // attendee or organizer
         userTypeForm.getItems().addAll("Attendee","Organizer");
         userTypeForm.setPromptText("Attendee/Organizer");
-
-        TextField dobInput = new TextField();
-        dobInput.setPromptText("DD/MM/YYYY");
+        // using date picker as it makes validation of dates much easier or pretty much non existent
+        // we only have to check for date validity and that a date was inputted and we dont have to worry about the format
+        DatePicker dobInput = new DatePicker();
+        dobInput.setPromptText("Date of Birth");
 
         // Feedback label to show errors
         Label feedbackLabel = new Label();
@@ -76,10 +79,15 @@ public class LoginPage extends Application {
                 String password = passwordInput.getText();
                 String gender = genderInput.getValue();
                 String type = userTypeForm.getValue();
-                String dob = dobInput.getText();
-
+                LocalDate dob;
+                try {
+                    dob = dobInput.getValue();
+                } catch (RuntimeException ex) {
+                    feedbackLabel.setText("invalid date format");
+                    return;
+                }
                 // Check if any input is missing
-                if (username.isEmpty() || password.isEmpty() || gender == null || type == null || dob.isEmpty()) {
+                if (username.isEmpty() || password.isEmpty() || gender == null || type == null || dob == null) {
                     feedbackLabel.setText("Please fill all fields.");
                     return;
                 }
@@ -99,22 +107,21 @@ public class LoginPage extends Application {
                     feedbackLabel.setText("Invalid password format.");
                     return;
                 }
-
-                // Validate gender input
-                Gender parsedGender;
-                try {
-                    parsedGender = Gender.valueOf(gender.toUpperCase());
-                } catch (IllegalArgumentException ex) {
-                    feedbackLabel.setText("Invalid gender input.");
+                // date of birth validation
+                if(dob.isAfter(LocalDate.now().minusYears(18))){
+                    feedbackLabel.setText("You must be at least 18 years old.");
                     return;
                 }
+
+                // Validate gender input
+                Gender userGender = Gender.valueOf(gender.toUpperCase());
 
                 // Create user and add to database
                 User newUser;
                 if (type.equals("Attendee")) {
-                    newUser = new Attendee(username, password, dob, parsedGender);
+                    newUser = new Attendee(username, password, dob.toString(), userGender);
                 } else if (type.equals("Organizer")) {
-                    newUser = new Organizer(username, password, dob, parsedGender);
+                    newUser = new Organizer(username, password, dob.toString(), userGender);
                 } else {
                     feedbackLabel.setText("Invalid user type.");
                     return;

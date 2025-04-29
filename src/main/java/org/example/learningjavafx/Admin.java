@@ -153,6 +153,7 @@ public class Admin extends User {
     public void removeRoom(Room room) {
         for (int i = 0; i < room.getEvents().size(); i++) {
             removeCurrentEvent(room.getEvents().get(i));
+            i--; // as when an event gets removed getevents.size() decreases and the index of others also shifts back
         }
         Database.rooms.remove(room);
     }

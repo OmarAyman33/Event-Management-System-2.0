@@ -29,6 +29,7 @@ public class AdminDashboard {
         Button viewRoomsBtn = new Button("View All Rooms");
         Button viewEventsBtn = new Button("View All Events");
         Button logOutBtn = new Button("Log Out");
+        Button viewAttendeesBtn = new Button("View All Attendees");
 
         // Apply styling
         String style = Database.menuButtonStyle;
@@ -37,12 +38,14 @@ public class AdminDashboard {
         viewRoomsBtn.setStyle(style);
         viewEventsBtn.setStyle(style);
         logOutBtn.setStyle(style);
+        viewAttendeesBtn.setStyle(style);
 
         addCategoryBtn.setMaxWidth(Double.MAX_VALUE);
         addRoomBtn.setMaxWidth(Double.MAX_VALUE);
         viewRoomsBtn.setMaxWidth(Double.MAX_VALUE);
         viewEventsBtn.setMaxWidth(Double.MAX_VALUE);
         logOutBtn.setMaxWidth(Double.MAX_VALUE);
+        viewAttendeesBtn.setMaxWidth(Double.MAX_VALUE);
 
         // Set button actions
         addCategoryBtn.setOnAction(e -> stage.setScene(addCategory(stage)));
@@ -50,9 +53,10 @@ public class AdminDashboard {
         viewRoomsBtn.setOnAction(e -> stage.setScene(viewRooms(stage)));
         viewEventsBtn.setOnAction(e -> stage.setScene(viewEvents(stage)));
         logOutBtn.setOnAction(e -> new LoginPage().start(stage));
+        viewAttendeesBtn.setOnAction(e -> stage.setScene(viewAttendees(stage)));
 
         // Add buttons to vbox
-        vbox.getChildren().addAll(addCategoryBtn, addRoomBtn, viewRoomsBtn, viewEventsBtn, logOutBtn);
+        vbox.getChildren().addAll(addCategoryBtn, addRoomBtn, viewRoomsBtn, viewEventsBtn,viewAttendeesBtn, logOutBtn);
 
         Scene scene = new Scene(vbox, 300, 400);
         stage.setScene(scene);
@@ -174,10 +178,10 @@ public class AdminDashboard {
 
         removeBtn.setOnAction(e -> {
             int index = roomList.getSelectionModel().getSelectedIndex();
-            if (index != -1) {
+            if (index != -1) { // if nothing is selected the index is automatically sett to -1
                 Room room = rooms.get(index);
                 admin.removeRoom(room);
-                feedback.setText("Room removed (and associated events).");
+                feedback.setText("Room removed.");
                 roomList.getItems().remove(index);
                 rooms.remove(index);
             } else {
@@ -231,6 +235,53 @@ public class AdminDashboard {
         backBtn.setOnAction(e -> displayDashboard(stage));
 
         vbox.getChildren().addAll(label, eventList, removeBtn, feedback, backBtn);
+        return new Scene(vbox, 400, 400);
+    }
+    // Screen to view all attendees
+    public Scene viewAttendees(Stage stage) {
+        VBox vbox = new VBox();
+        vbox.setSpacing(10);
+        vbox.setPadding(new Insets(20));
+
+        Label label = new Label("All Attendees:");
+
+        ListView<String> attendeeList = new ListView<>();
+
+        for (int i = 0; i < Database.users.size(); i++) {
+            if(Database.users.get(i) instanceof Attendee) {
+                Attendee attendee = (Attendee) Database.users.get(i);
+                attendeeList.getItems().add(attendee.getUsername() + " | " + attendee.getGender());
+            }
+        }
+
+        Button backBtn = new Button("Back");
+        backBtn.setStyle(Database.confirmButtonStyle);
+
+        backBtn.setOnAction(e -> displayDashboard(stage));
+
+        Button removeBtn = new Button("Remove Selected Attendee");
+        removeBtn.setStyle(Database.menuButtonStyle);
+        removeBtn.setOnAction(e -> {
+            ArrayList<Attendee> attendees = new ArrayList<>();
+            for (int i = 0 ; i < Database.users.size(); i++) {
+                User user = Database.users.get(i);
+                if (user instanceof Attendee) {
+                    attendees.add((Attendee) user);
+                }
+            }
+            int index = attendeeList.getSelectionModel().getSelectedIndex();
+            if (index != -1) {
+                Attendee attendee = attendees.get(index);
+                for(int i = 0; i < attendee.getRegisteredEvents().size(); i++) {
+                    Event event = attendee.getRegisteredEvents().get(i);
+                    event.getAttendees().remove(attendee);
+                }
+                Database.users.remove(attendee);
+                attendeeList.getItems().remove(index);
+            }
+        });
+
+        vbox.getChildren().addAll(label, attendeeList,removeBtn, backBtn);
         return new Scene(vbox, 400, 400);
     }
 }

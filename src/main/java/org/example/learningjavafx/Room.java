@@ -72,11 +72,7 @@ public class Room {
     }
 
     public ArrayList<Event> getEvents() {
-        ArrayList<Event> copy = new ArrayList<>();
-        for (int i = 0; i < events.size(); i++) {
-            copy.add(events.get(i));
-        }
-        return copy;
+        return new ArrayList<>(events);
     }
 
     public void removeEvent(Event event){

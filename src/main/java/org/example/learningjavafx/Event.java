@@ -20,6 +20,7 @@ public class Event {
         this.price = price;
         this.organizer = organizer;
         attendees = new ArrayList<Attendee>();
+        room.bookEvent(this);
     }
 
     public void addAttendee(Attendee attendee){
