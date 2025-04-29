@@ -11,25 +11,25 @@ public class Database {
     public static List<Category> categories = new ArrayList<Category>();
     public static LoginAuth login = new LoginAuth();
     public static String menuButtonStyle =
-            "-fx-background-color: #2196F3;" +   // green background
-            "-fx-text-fill: white;" +            // white text
-            "-fx-font-weight: bold;" +           // bold text
-            "-fx-font-size: 14px;" +             // decent text size
-            "-fx-background-radius: 12px;" +     // rounded corners
-            "-fx-border-radius: 12px;" +         // rounded borders
-            "-fx-padding: 10px 20px;" +          // padding inside
-            "-fx-border-color: transparent;" +   // no visible border
-            "-fx-cursor: hand;";                 // cursor becomes hand on hover
-    public static String confirmButtonStyle = "-fx-background-color: #F5F5F5;" + // very light gray background
-            "-fx-text-fill: #333333;" +        // dark gray text
-            "-fx-font-weight: bold;" +         // bold text
-            "-fx-font-size: 13px;" +           // slightly smaller text size
-            "-fx-background-radius: 8px;" +    // gentle rounded corners
+            "-fx-background-color: #2196F3;" +
+            "-fx-text-fill: white;" +
+            "-fx-font-weight: bold;" +
+            "-fx-font-size: 14px;" +
+            "-fx-background-radius: 12px;" +
+            "-fx-border-radius: 12px;" +
+            "-fx-padding: 10px 20px;" +
+            "-fx-border-color: transparent;" +
+            "-fx-cursor: hand;";
+    public static String confirmButtonStyle = "-fx-background-color: #F5F5F5;" +
+            "-fx-text-fill: #333333;" +
+            "-fx-font-weight: bold;" +
+            "-fx-font-size: 13px;" +
+            "-fx-background-radius: 8px;" +
             "-fx-border-radius: 8px;" +
-            "-fx-border-color: #CCCCCC;" +     // light gray border
-            "-fx-border-width: 1px;" +         // thin border
-            "-fx-padding: 8px 16px;" +         // a little less padding
-            "-fx-cursor: hand;";               // hand cursor on hover
+            "-fx-border-color: #CCCCCC;" +
+            "-fx-border-width: 1px;" +
+            "-fx-padding: 8px 16px;" +
+            "-fx-cursor: hand;";
 
     static {
         // === CATEGORIES ===
@@ -72,7 +72,7 @@ public class Database {
         users.add(att2);
         users.add(att3);
 
-        // === EVENTS ===
+        // === EVENTS ==
         events.add(new Event(LocalDate.now().plusDays(10), r1, tech, "Tech Expo 2025", 20.0, org1));
         events.add(new Event(LocalDate.now().plusDays(15), r2, music, "Jazz Night", 15.0, org2));
         events.add(new Event(LocalDate.now().plusDays(5), r3, art, "Art Showcase", 25.0, org3));
