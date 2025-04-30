@@ -73,12 +73,14 @@ public class Database {
         users.add(att3);
 
         // === EVENTS ==
+        //Adds event into local arraylist of org
         events.add(new Event(LocalDate.now().plusDays(10), r1, tech, "Tech Expo 2025", 20.0, org1));
         events.add(new Event(LocalDate.now().plusDays(15), r2, music, "Jazz Night", 15.0, org2));
         events.add(new Event(LocalDate.now().plusDays(5), r3, art, "Art Showcase", 25.0, org3));
         events.add(new Event(LocalDate.now().plusDays(20), r1, music, "EDM Bash", 30.0, org1));
         events.add(new Event(LocalDate.now().plusDays(12), r2, tech, "AI Conference", 35.0, org2));
         events.add(new Event(LocalDate.now().plusDays(18), r3, art, "Digital Gallery", 18.0, org3));
+        //Adds events into local arraylist of org (Simplifies)
         org1.addCreatedEvent(events.get(0)); org1.addCreatedEvent(events.get(3));
         org2.addCreatedEvent(events.get(1));org2.addCreatedEvent(events.get(4));
         org3.addCreatedEvent(events.get(2)); org3.addCreatedEvent(events.get(5));

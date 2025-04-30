@@ -30,6 +30,11 @@ public class Event {
         }
 
     }
+    @Override
+    public String toString() {
+        String dateString = (this.date != null) ? this.date.toString() : "No Date Set";
+        return this.name + " (" + dateString + ")"; // Combine name and date
+    }
 
     public String getName() {
         return name;
