@@ -35,4 +35,9 @@ public class Category {
         }
         return false;
     }
+    //Simplfied for Organizer class
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }
