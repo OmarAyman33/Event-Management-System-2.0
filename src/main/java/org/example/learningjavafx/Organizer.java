@@ -47,32 +47,7 @@ public class Organizer extends User {
     }
 
 
-    //  Viewing Own Events for organizer , Can be updated in phase 2 (GUI)
-    public void viewMyEvents() {
-        System.out.println("\n--- Events You Are Organizing ---");
 
-        if (this.myCreatedEvents == null || this.myCreatedEvents.isEmpty()) {
-            System.out.println("You have not created any events yet.");
-            return;
-        }
-
-        System.out.println("--------------------------------------------------");
-        for (int i = 0; i < this.myCreatedEvents.size(); i++) {
-            Event event = this.myCreatedEvents.get(i);
-            if(event.getDate().isAfter(LocalDate.now())) {
-                if (event != null) {
-                    // Event has getName(), getDate(), getPrice() (Change based on naming of events)
-                    System.out.printf(" (Date: %s, Price: $%.2f)%n",
-                            (i + 1),
-                            event.getName(),
-                            event.getDate(),
-                            event.getPrice()
-                    );
-                }
-            }
-        }
-        System.out.println("--------------------------------------------------");
-    }
     // --- CRUD Methods for Events ---
 
     public boolean createEvent(String name, LocalDate date, double price, Category category, Room room) {
@@ -201,89 +176,10 @@ public class Organizer extends User {
         }
     }
 
-    public void updateEvent() {
-        System.out.println("\n--- Update Event ---");
-        Scanner scanner = new Scanner(System.in);
-
-        viewMyEvents();
-        if (this.myCreatedEvents.isEmpty()) return;
-
-        // Events are displayed in numbers
-        //We Choose the event to update
-        System.out.print("Enter the number of the event you want to update: ");
-        int eventNumber = Integer.parseInt(scanner.nextLine());
-
-        if (eventNumber >= 1 && eventNumber <= this.myCreatedEvents.size()) {
-            Event eventToUpdate = this.myCreatedEvents.get(eventNumber - 1);
-
-            System.out.println("What do you want to update for '" + eventToUpdate.getName() + "'?");
-            System.out.println("1. Event Name");
-            System.out.println("2. Ticket Price");
-            System.out.print("Enter your choice: ");
-            int choice = Integer.parseInt(scanner.nextLine());
-
-            switch (choice) {
-                case 1:
-                    System.out.print("Enter new Event Name: ");
-                    String newName = scanner.nextLine();
-                    eventToUpdate.setName(newName); // From Events
-                    System.out.println("Event name updated!");
-                    break;
-                case 2:
-                    System.out.print("Enter new Ticket Price: ");
-                    double newPrice = Double.parseDouble(scanner.nextLine());
-                    eventToUpdate.setPrice(newPrice); // From Events
-                    System.out.println("Event price updated!");
-                    break;
-                default:
-                    System.out.println("Invalid choice.");
-            }
-        } else {
-            System.out.println("Invalid event number entered.");
-        }
-    }
 
 
     //Display attendees Method
 
-    public void viewAttendeesForEvent() {
-        System.out.println("\n--- View Event Attendees ---");
-        Scanner scanner = new Scanner(System.in);
-
-        // All organizer events
-        viewMyEvents();
-        if (this.myCreatedEvents.isEmpty()) {
-            return;
-        }
-
-        // 3. Choose event
-        System.out.print("Enter the number of the event to view attendees for: ");
-        int eventNumber = Integer.parseInt(scanner.nextLine());
-
-        //Check
-        if (eventNumber >= 1 && eventNumber <= this.myCreatedEvents.size()) {
-            Event selectedEvent = this.myCreatedEvents.get(eventNumber - 1);
-
-            //Get List from events
-            List<Attendee> attendees = selectedEvent.getAttendees();
-
-            // Display the attendees
-            System.out.println("\nAttendees for '" + selectedEvent.getName() + "':");
-            if (attendees == null || attendees.isEmpty()) {
-                System.out.println("  (No attendees registered yet)");
-            } else {
-                for (int i = 0; i < attendees.size(); i++) {
-                    Attendee attendee = attendees.get(i);
-                    if (attendee != null) {
-
-                        System.out.printf("", (i + 1), attendee.getUsername());
-                    }
-                }
-            }
-        } else {
-            System.out.println("Invalid event number entered.");
-        }
-    }
 
     //Main Dashboard
     private OrganizerDashboard organizerDashboard = new OrganizerDashboard(this);
@@ -309,12 +205,72 @@ public class Organizer extends User {
                 '}';
     }
 
-    //View Available rooms (baher)
 
     //Getters for GUI
     // To use local array list
     public List<Event> getMyCreatedEvents() {
         return this.myCreatedEvents;
+    }
+
+    public boolean updateEvent(Event eventToUpdate, String newName, LocalDate newDate,
+                               double newPrice, Category newCategory, Room newRoom) {
+
+        // Validation
+        if (eventToUpdate == null || newName == null || newName.trim().isEmpty() ||
+                newDate == null || newPrice < 0 || newCategory == null || newRoom == null) {
+            System.err.println("Backend Update(Replace) Error: Invalid null data provided for replacement.");
+            return false;
+        }
+        if (newDate.isBefore(LocalDate.now())) {
+            System.err.println("Backend Update(Replace) Error: Replacement event date must be in the future.");
+            return false;
+        }
+
+        // --- 3. Room Booking Logic & Availability Check (for the NEW room/date) ---
+        Room oldRoom = eventToUpdate.getRoom();
+        LocalDate oldDate = eventToUpdate.getDate();
+        boolean dateChanged = !newDate.equals(oldDate);
+        boolean roomChanged = !newRoom.equals(oldRoom); // Relies on Room.equals()
+
+        if (dateChanged || roomChanged) {
+            // making sure that the new room is available on the new date
+            if (!newRoom.isAvailableOn(newDate)) {
+                System.err.println("Backend Update(Replace) Failed: Target Room '" + newRoom.getName() +
+                        "' is not available on target date " + newDate + " for replacement event.");
+                return false;
+            }
+        }
+        // checks done, now onto the replacement process
+
+
+        try {
+            // if room has changed, unbook the old room
+            if ((!oldRoom.equals(newRoom) || !eventToUpdate.getDate().equals(newDate))) {
+                oldRoom.removeEvent(eventToUpdate);
+                System.out.println("Backend Info: Removed event from old room: " + oldRoom.getName());
+            }
+
+            // updating the event details
+            eventToUpdate.setName(newName.trim());
+            eventToUpdate.setDate(newDate);
+            eventToUpdate.setPrice(newPrice);
+            eventToUpdate.setCategory(newCategory);
+            eventToUpdate.setRoom(newRoom);
+
+            // booking new room
+            if (!newRoom.equals(oldRoom) || !newDate.equals(eventToUpdate.getDate())) {
+                newRoom.bookEvent(eventToUpdate);
+                System.out.println("Backend Info: Booked event in new room: " + newRoom.getName());
+            }
+
+            System.out.println("Backend: Event '" + eventToUpdate.getName() + "' updated in-place by Organizer '" + this.getUsername() + "'.");
+            return true;
+        } catch (Exception ex) {
+            System.err.println("Backend Error: Failed to update event: " + ex.getMessage());
+            ex.printStackTrace();
+            return false;
+        }
+
     }
 
 }
