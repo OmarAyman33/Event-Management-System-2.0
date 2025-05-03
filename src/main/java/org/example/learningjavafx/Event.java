@@ -71,4 +71,17 @@ public class Event {
     public Room getRoom(){
         return room;
     }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
 }

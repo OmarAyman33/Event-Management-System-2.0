@@ -13,185 +13,100 @@ import javafx.scene.control.ButtonType;
 import java.util.Optional;
 
 public class OrganizerDashboard {
-    private Organizer organizer;     // Instance variable to hold the specific Organizer logged in
-    public OrganizerDashboard(Organizer organizer) {
-            this.organizer = organizer;
-    }
-    public OrganizerDashboard() {
-    }
-
-
-    //DashBoard of organizer , Includes validation
-
+    private Organizer organizer;
+    public OrganizerDashboard(Organizer organizer) { this.organizer = organizer; }
+    public OrganizerDashboard() {}
 
     public void displayDashboard(Stage stage) {
-
-        // Layout
-        VBox dashboardLayout = new VBox();
-        dashboardLayout.setSpacing(10);
-        dashboardLayout.setPadding(new Insets(25));
+        VBox layout = new VBox(10);
+        layout.setPadding(new Insets(25));
         stage.setTitle("Organizer Dashboard - Welcome " + organizer.getUsername());
 
-        // Menu Buttons
-        Button viewMyEventsButton = new Button("View My Events");
-        Button manageEventsButton = new Button("Manage Events (Create/Update/Delete)");
-        Button viewAvailableRoomsButton = new Button("View Available Rooms");
-        Button viewWalletButton = new Button("View Wallet / Balance");
-        Button logoutButton = new Button("Log Out");
+        Button viewMyEvents = new Button("View My Events");
+        Button manageEvents = new Button("Manage Events (Create/Update/Delete)");
+        Button viewAvailableRooms = new Button("View Available Rooms");
+        Button viewWallet = new Button("View Wallet / Balance");
+        Button logout = new Button("Log Out");
 
-        //Styling (will apply css later)
-        String menuStyle = Database.menuButtonStyle;
-        viewMyEventsButton.setStyle(menuStyle);
-        manageEventsButton.setStyle(menuStyle);
-        viewAvailableRoomsButton.setStyle(menuStyle);
-        viewWalletButton.setStyle(menuStyle);
-        logoutButton.setStyle(menuStyle);
+        String style = Database.menuButtonStyle;
+        viewMyEvents.setStyle(style);
+        manageEvents.setStyle(style);
+        viewAvailableRooms.setStyle(style);
+        viewWallet.setStyle(style);
+        logout.setStyle(style);
 
-        //Fill Horizontal
-        viewMyEventsButton.setMaxWidth(Double.MAX_VALUE);
-        manageEventsButton.setMaxWidth(Double.MAX_VALUE);
-        viewAvailableRoomsButton.setMaxWidth(Double.MAX_VALUE);
-        viewWalletButton.setMaxWidth(Double.MAX_VALUE);
-        logoutButton.setMaxWidth(Double.MAX_VALUE);
+        viewMyEvents.setMaxWidth(Double.MAX_VALUE);
+        manageEvents.setMaxWidth(Double.MAX_VALUE);
+        viewAvailableRooms.setMaxWidth(Double.MAX_VALUE);
+        viewWallet.setMaxWidth(Double.MAX_VALUE);
+        logout.setMaxWidth(Double.MAX_VALUE);
 
-        //Vbox
-        dashboardLayout.getChildren().addAll(
-                viewMyEventsButton,
-                manageEventsButton,
-                viewAvailableRoomsButton,
-                viewWalletButton,
-                logoutButton
-        );
+        layout.getChildren().addAll(viewMyEvents, manageEvents, viewAvailableRooms, viewWallet, logout);
 
-        // Button Actions (Main Dashboard)
-        viewMyEventsButton.setOnAction(e -> {
-            stage.setScene(viewMyEventsScene(stage));
-        });
+        viewMyEvents.setOnAction(e -> stage.setScene(viewMyEventsScene(stage)));
+        manageEvents.setOnAction(e -> stage.setScene(manageEventsScene(stage)));
+        viewAvailableRooms.setOnAction(e -> stage.setScene(viewAvailableRoomsScene(stage)));
+        viewWallet.setOnAction(e -> stage.setScene(manageWalletScene(stage)));
+        logout.setOnAction(e -> new LoginPage().start(stage));
 
-        manageEventsButton.setOnAction(e -> {
-            stage.setScene(manageEventsScene(stage));
-
-        });
-
-        //baher
-        viewAvailableRoomsButton.setOnAction(e -> {
-            // TODO: Implement viewAvailableRoomsScene method
-            // stage.setScene(viewAvailableRoomsScene(stage));
-        });
-
-        viewWalletButton.setOnAction(e -> {
-            stage.setScene(manageWalletScene(stage));
-        });
-
-        logoutButton.setOnAction(e -> {
-            // Navigate back to the Login Page
-            System.out.println("Action: Logging out...");
-            new LoginPage().start(stage); // Assumes LoginPage().start(stage) exists and works
-        });
-
-        // 6. Create and Show Scene
-        Scene scene = new Scene(dashboardLayout, 400, 450);
-        stage.setScene(scene);
+        stage.setScene(new Scene(layout, 400, 450));
         stage.show();
     }
 
-
-    //Scenes
-
-    //ViewMyevents Scene (Pulls from database events (Local arraylist) created by this specifc organizer)
     private Scene viewMyEventsScene(Stage stage) {
-        VBox vBox = new VBox();
-        vBox.setSpacing(10);
-        vBox.setPadding(new Insets(20));
+        VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(20));
+        Label title = new Label("Events You Created:");
+        title.setFont(new Font(20));
+        ListView<String> list = new ListView<>();
+        List<Event> events = organizer.getMyCreatedEvents();
 
-        Label titleLabel = new Label("Events You Created:");
-        titleLabel.setFont(new Font(20));
-
-        ListView<String> eventsListView = new ListView<>();
-
-        if (this.organizer != null) {
-            List<Event> organizerCreatedEvents = this.organizer.getMyCreatedEvents();
-
-            if (organizerCreatedEvents != null && !organizerCreatedEvents.isEmpty()) {
-                for (Event event : organizerCreatedEvents) {
-
-                    String eventInfo = event.getName() + " - Date: " + event.getDate().toString() + " - Price: $" + event.getPrice();
-
-                    eventsListView.getItems().add(eventInfo);
-                }
-            } else {
-                eventsListView.getItems().add("You have not created any events yet.");
-                eventsListView.setDisable(true);
-            }
+        if (events != null && !events.isEmpty()) {
+            for (Event e : events) list.getItems().add(e.getName() + " - Date: " + e.getDate() + " - Price: $" + e.getPrice());
         } else {
-            eventsListView.getItems().add("Error: Organizer data not available.");
-            eventsListView.setDisable(true);
+            list.getItems().add("You have not created any events yet.");
+            list.setDisable(true);
         }
 
-        Button backBtn = new Button("Back");
-        backBtn.setStyle(Database.confirmButtonStyle);
-        backBtn.setOnAction(e -> displayDashboard(stage)); // Go back to main dashboard
+        Button back = new Button("Back");
+        back.setStyle(Database.confirmButtonStyle);
+        back.setOnAction(e -> displayDashboard(stage));
 
-        vBox.getChildren().addAll(titleLabel, eventsListView, backBtn);
-        return new Scene(vBox, 450, 400); // Adjust size
+        vbox.getChildren().addAll(title, list, back);
+        return new Scene(vbox, 450, 400);
     }
 
-
-    // ManageEvents Scene
     private Scene manageEventsScene(Stage stage) {
-        // Layout
-        VBox manageLayout = new VBox();
-        manageLayout.setSpacing(10);
-        manageLayout.setPadding(new Insets(20));
+        VBox layout = new VBox(10);
+        layout.setPadding(new Insets(20));
 
-        // Title
-        Label titleLabel = new Label("Manage Your Events");
-        titleLabel.setFont(new Font(20));
+        Label title = new Label("Manage Your Events");
+        title.setFont(new Font(20));
 
-        // Action Buttons
-        Button createEventButton = new Button("Create New Event");
-        Button updateEventButton = new Button("Update Existing Event");
-        Button deleteEventButton = new Button("Delete Event");
+        Button create = new Button("Create New Event");
+        Button update = new Button("Update Existing Event");
+        Button delete = new Button("Delete Event");
+        Button back = new Button("Back");
 
-        // Back Button
-        Button backBtn = new Button("Back");
+        String style = Database.menuButtonStyle;
+        create.setStyle(style); update.setStyle(style); delete.setStyle(style);
+        back.setStyle(Database.confirmButtonStyle);
 
-        // Styling (will apply css later)
-        String menuStyle = Database.menuButtonStyle;
-        String confirmStyle = Database.confirmButtonStyle;
-        createEventButton.setStyle(menuStyle);
-        updateEventButton.setStyle(menuStyle);
-        deleteEventButton.setStyle(menuStyle);
-        backBtn.setStyle(confirmStyle);
+        create.setMaxWidth(Double.MAX_VALUE);
+        update.setMaxWidth(Double.MAX_VALUE);
+        delete.setMaxWidth(Double.MAX_VALUE);
+        back.setMaxWidth(Double.MAX_VALUE);
 
-        // Fill Horizontal
-        createEventButton.setMaxWidth(Double.MAX_VALUE);
-        updateEventButton.setMaxWidth(Double.MAX_VALUE);
-        deleteEventButton.setMaxWidth(Double.MAX_VALUE);
-        backBtn.setMaxWidth(Double.MAX_VALUE); // Optional for Back button
+        layout.getChildren().addAll(title, create, update, delete, back);
 
-        // Vbox
-        manageLayout.getChildren().addAll(titleLabel, createEventButton, updateEventButton, deleteEventButton, backBtn);
+        create.setOnAction(e -> stage.setScene(createEventFormScene(stage)));
+        update.setOnAction(e -> stage.setScene(selectEventForUpdateScene(stage)));
+        delete.setOnAction(e -> stage.setScene(deleteEventScene(stage)));
+        back.setOnAction(e -> displayDashboard(stage));
 
-        // Button Actions
-        createEventButton.setOnAction(e -> {
-            stage.setScene(createEventFormScene(stage));
-        });
-
-        updateEventButton.setOnAction(e -> {
-            // stage.setScene(selectEventForUpdateScene(stage));
-        });
-
-        deleteEventButton.setOnAction(e -> {
-
-            stage.setScene(deleteEventScene(stage));
-        });
-
-        backBtn.setOnAction(e -> displayDashboard(stage)); // Navigate back to main dashboard
-
-        // Create and Return Scene
-        return new Scene(manageLayout, 400, 300); // Adjust size as needed
+        return new Scene(layout, 400, 300);
     }
+
 
     //Create Event Scene
 
@@ -240,13 +155,7 @@ public class OrganizerDashboard {
 
         // --- Add Controls to Layout ---
         formLayout.getChildren().addAll(
-                titleLabel,
-                nameLabel, nameField,
-                dateLabel, datePicker,
-                priceLabel, priceField,
-                categoryLabel, categoryComboBox,
-                roomLabel, roomComboBox,
-                saveButton, backButton
+                titleLabel, nameLabel, nameField, dateLabel, datePicker, priceLabel, priceField, categoryLabel, categoryComboBox, roomLabel, roomComboBox, saveButton, backButton
         );
 
         // Actions
@@ -281,7 +190,6 @@ public class OrganizerDashboard {
             roomCombo.setPromptText("Select date first");
             return;
         }
-
 
         boolean roomFound = false;
         for (Room room : Database.rooms) {
@@ -324,7 +232,6 @@ public class OrganizerDashboard {
         } catch (NumberFormatException ex) {
             new Alert(AlertType.WARNING, "Invalid Price. Please enter a valid number.").showAndWait(); return;
         }
-
 
         boolean success = this.organizer.createEvent(eventName, eventDate, eventPrice, selectedCategory, selectedRoom);
 
@@ -407,7 +314,6 @@ public class OrganizerDashboard {
 
         backBtn.setOnAction(e -> stage.setScene(manageEventsScene(stage))); // Back to manage
 
-
         vbox.getChildren().addAll(label, eventComboBox, removeBtn, backBtn);
 
         // Create and return the scene
@@ -482,9 +388,219 @@ public class OrganizerDashboard {
         return new Scene(vBox, 350, 250); // Adjust size
     }
 
+    private Scene selectEventForUpdateScene(Stage stage) {
+        VBox layout = new VBox(10); // Use VBox like delete scene
+        layout.setPadding(new Insets(20));
+
+        Label titleLabel = new Label("Select Event to Update:");
+        titleLabel.setFont(new Font(20));
+
+        ComboBox<Event> eventComboBox = new ComboBox<>();
+        eventComboBox.setPromptText("Choose an event you created...");
+        eventComboBox.setMaxWidth(Double.MAX_VALUE); // Stretch
+
+        // Populate with ONLY the organizer's events
+        if (this.organizer != null) {
+            List<Event> myEvents = this.organizer.getMyCreatedEvents();
+            if (myEvents != null && !myEvents.isEmpty()) {
+                eventComboBox.getItems().addAll(myEvents);
+            } else {
+                eventComboBox.setPromptText("You have no events to update.");
+                eventComboBox.setDisable(true);
+            }
+        } else {
+            eventComboBox.setPromptText("Error: Organizer data unavailable.");
+            eventComboBox.setDisable(true);
+            new Alert(AlertType.ERROR, "Cannot load events: Organizer data missing.").showAndWait();
+        }
+
+        Button selectButton = new Button("Edit Selected Event");
+        selectButton.setStyle(Database.menuButtonStyle); // Style
+        selectButton.setMaxWidth(Double.MAX_VALUE);
+        selectButton.setDisable(true); // Disable until selection
+
+        // Enable button only when an event is selected
+        eventComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            selectButton.setDisable(newVal == null);
+        });
+
+        // Action: Go to the form scene when the button is clicked
+        selectButton.setOnAction(e -> {
+            Event selectedEvent = eventComboBox.getValue();
+            if (selectedEvent != null) {
+                // Pass the selected event to the form scene
+                stage.setScene(updateEventFormScene(stage, selectedEvent));
+            }
+            // No else needed, button should be disabled if null
+        });
+
+        Button backButton = new Button("Back");
+        backButton.setStyle(Database.confirmButtonStyle); // Style
+        backButton.setMaxWidth(Double.MAX_VALUE);
+        // Back to the main manage events menu
+        backButton.setOnAction(e -> stage.setScene(manageEventsScene(stage)));
+
+        layout.getChildren().addAll(titleLabel, eventComboBox, selectButton, backButton);
+        return new Scene(layout, 400, 250); // Size similar to delete scene
+    }
+
+    private void populateAvailableRooms(ComboBox<Room> roomBox, LocalDate date, Event currentEvent) {
+        roomBox.getItems().clear();
+        roomBox.setDisable(true);
+
+        if (date == null || date.isBefore(LocalDate.now())) {
+            roomBox.setPromptText("Select valid future date");
+            return;
+        }
+
+        for (Room room : Database.rooms) {
+            boolean isBooked = !room.isAvailableOn(date) && !room.equals(currentEvent.getRoom());
+            if (!isBooked) roomBox.getItems().add(room);
+        }
+
+        roomBox.setDisable(roomBox.getItems().isEmpty());
+        if (roomBox.getItems().isEmpty()) roomBox.setPromptText("No rooms available");
+    }
+
+    // --- Step 2: Scene for the UPDATE FORM ---
+    // (Layout similar to createEventFormScene, takes Event parameter)
+    private Scene updateEventFormScene(Stage stage, Event event) {
+        VBox layout = new VBox(10);
+        layout.setPadding(new Insets(20));
+
+        Label title = new Label("Update Event: " + event.getName());
+        title.setFont(new Font(20));
+
+        TextField nameField = new TextField(event.getName());
+        DatePicker datePicker = new DatePicker(event.getDate());
+        TextField priceField = new TextField(String.format("%.2f", event.getPrice()));
+        ComboBox<Category> categoryBox = new ComboBox<>();
+        ComboBox<Room> roomBox = new ComboBox<>();
+
+        categoryBox.getItems().addAll(Database.categories);
+        categoryBox.setValue(event.getCategory());
+
+        roomBox.setDisable(true);
+        datePicker.setOnAction(e -> populateAvailableRooms(roomBox, datePicker.getValue(), event));
+        populateAvailableRooms(roomBox, event.getDate(), event);
+        roomBox.setValue(event.getRoom());
+
+        Button saveBtn = new Button("Save Changes"), backBtn = new Button("Back");
+        saveBtn.setStyle(Database.menuButtonStyle);
+        backBtn.setStyle(Database.confirmButtonStyle);
+
+        saveBtn.setOnAction(e -> {
+            String name = nameField.getText().trim();
+            String priceText = priceField.getText().trim();
+            LocalDate date = datePicker.getValue();
+            Category category = categoryBox.getValue();
+            Room room = roomBox.getValue();
+
+            if (name.isEmpty() || priceText.isEmpty() || date == null || category == null || room == null) {
+                new Alert(AlertType.WARNING, "Please fill all fields.").showAndWait(); return;
+            }
+            if (date.isBefore(LocalDate.now())) {
+                new Alert(AlertType.WARNING, "Date must be in the future.").showAndWait(); return;
+            }
+
+            double price;
+            try {
+                price = Double.parseDouble(priceText);
+                if (price < 0) throw new NumberFormatException();
+            } catch (NumberFormatException ex) {
+                new Alert(AlertType.WARNING, "Invalid price.").showAndWait(); return;
+            }
+
+            boolean changedDate = !date.equals(event.getDate());
+            boolean changedRoom = !room.equals(event.getRoom());
+            if ((changedDate || changedRoom) && !room.isAvailableOn(date)) {
+                new Alert(AlertType.WARNING, "Selected room is unavailable on that date.").showAndWait(); return;
+            }
+
+            if (organizer.updateEvent(event, name, date, price, category, room)) {
+                new Alert(AlertType.INFORMATION, "Event updated!").showAndWait();
+                stage.setScene(manageEventsScene(stage));
+            } else {
+                new Alert(AlertType.ERROR, "Update failed.").showAndWait();
+            }
+        });
+
+        backBtn.setOnAction(e -> stage.setScene(selectEventForUpdateScene(stage)));
+
+        layout.getChildren().addAll(
+                title,
+                new Label("Name:"), nameField,
+                new Label("Date:"), datePicker,
+                new Label("Price ($):"), priceField,
+                new Label("Category:"), categoryBox,
+                new Label("Room:"), roomBox,
+                saveBtn, backBtn
+        );
+
+
+        return new Scene(layout, 450, 500);
+    }
 
 
 
+    private Scene viewAvailableRoomsScene(Stage stage) {
+        // Layout
+        VBox formLayout = new VBox();
+        formLayout.setSpacing(10);
+        formLayout.setPadding(new Insets(20));
 
+        // Title
+        Label titleLabel = new Label("View Available Rooms");
+        titleLabel.setFont(new Font(20));
 
+        // Date Picker to select date
+        Label dateLabel = new Label("Select Date:");
+        DatePicker datePicker = new DatePicker();
+        datePicker.setPromptText("Select date to view availability");
+
+        // ListView to show available rooms
+        ListView<String> availableRoomsList = new ListView<>();
+
+        // Action Buttons
+        Button checkBtn = new Button("Check Available Rooms");
+        Button backBtn = new Button("Back");
+        checkBtn.setStyle(Database.menuButtonStyle);
+        backBtn.setStyle(Database.confirmButtonStyle);
+
+        // Button Actions
+        checkBtn.setOnAction(e -> {
+            LocalDate selectedDate = datePicker.getValue();
+            availableRoomsList.getItems().clear();
+
+            if (selectedDate == null) {
+                new Alert(AlertType.WARNING, "Please select a date.").showAndWait();
+                return;
+            }
+
+            boolean found = false;
+            for (Room room : Database.rooms) {
+                if (room.isAvailableOn(selectedDate)) {
+                    availableRoomsList.getItems().add("Room: " + room.getName() + " (Capacity: " + room.getCapacity() + ")");
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                availableRoomsList.getItems().add("No rooms available on " + selectedDate);
+            }
+        });
+
+        backBtn.setOnAction(e -> displayDashboard(stage));
+
+        // Add all elements to layout
+        formLayout.getChildren().addAll(
+                titleLabel,
+                dateLabel, datePicker,
+                checkBtn,
+                availableRoomsList,
+                backBtn
+        );
+
+        return new Scene(formLayout, 450, 500);
+    }
 }
