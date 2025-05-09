@@ -31,7 +31,7 @@ public class Room {
     // Core functionality
     /**
      * Checks if the room is available on a specific date
-     * @return true if available, false if already booked
+     * return true if available, false if already booked
      */
 
     public boolean isAvailableOn(LocalDate date) {

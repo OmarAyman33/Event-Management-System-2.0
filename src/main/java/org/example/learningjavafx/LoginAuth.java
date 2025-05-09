@@ -9,8 +9,6 @@ import javafx.stage.Stage;
 import java.util.Scanner;
 
 public class LoginAuth {
-    // start page of program
-    Scanner input = new Scanner(System.in);
 
     public static void login(String username, String password, Stage stage){
         for (int i = 0; i < Database.users.size(); i++) {
