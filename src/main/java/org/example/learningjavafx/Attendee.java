@@ -48,22 +48,6 @@ public class Attendee extends User {
         wallet.addFunds(event.getPrice());
     }
 
-    // Display events that match the attendee's interests
-    public void showEventsByInterest() {
-        System.out.println("Events matching your interests:");
-        for (int i = 0; i < Database.events.size(); i++) {
-            Event event = Database.events.get(i);
-            for (int j = 0; j < interests.size(); j++) {
-                Category interest = interests.get(j);
-                if (event.getDate().isAfter(LocalDate.now())) {
-                    if (event.getCategory().equals(interest)) {
-                        System.out.println((i + 1) + ". " + event.getName() + " - $" + event.getPrice() + ", Date: " + event.getDate());
-                        break;
-                    }
-                }
-            }
-        }
-    }
 
     // Purchase a ticket for a selected event
     public boolean buyTicket(Event selectedEvent) {
@@ -79,13 +63,7 @@ public class Attendee extends User {
         }
     }
 
-    // Display events registered by the attendee
-    public void yourEvents() {
-        for (int i = 0; i < registeredEvents.size(); i++) {
-            Event event = registeredEvents.get(i);
-            System.out.println((i + 1) + ". " + event.getName() + " - $" + event.getPrice() + ", Date: " + event.getDate());
-        }
-    }
+
 
     public ArrayList<Event> getRegisteredEvents() {
         return registeredEvents;

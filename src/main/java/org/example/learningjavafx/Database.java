@@ -31,6 +31,7 @@ public class Database {
             "-fx-padding: 8px 16px;" +
             "-fx-cursor: hand;";
 
+    // static initialization to populate the database with dummy data
     static {
         // === CATEGORIES ===
         Category tech = new Category("Tech");

@@ -63,7 +63,7 @@ public class AdminDashboard {
         stage.show();
     }
 
-    // === Screens for each button ===
+
 
     // Screen to add a new category
     public Scene addCategory(Stage stage) {
