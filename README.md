@@ -1,6 +1,6 @@
-# Event Management System (JavaFX)
+# Event Management System 
 
-A university team project built for a Software Engineering course. This system allows users to register as Attendees or Organizers and manage events through a graphical interface built using JavaFX.
+A university team project built for an Object Oriented Programming course. This system allows users to register as Attendees or Organizers and manage events through a graphical interface built using JavaFX.
 
 ##  Project Structure
 
